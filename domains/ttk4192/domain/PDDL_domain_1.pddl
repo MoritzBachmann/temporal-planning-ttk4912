@@ -10,8 +10,7 @@
 
   (:predicates
     (at ?physical_obj1 - subject ?location1 - location)
-    (available ?vehicle1 - vehicle)
-    (available ?camera1 - camera)    
+    (available ?vehicle1 - vehicle)   
     (connects ?route1 - route ?location1 - location ?location2 - location)
     (in_city ?location1 - location ?city1 - city)
     (route_available ?route1 - route)
@@ -19,7 +18,10 @@
     (photo ?subject1 - subject)
     (no_seals_check ?subject1 - subject)
     (seals_check ?subject1 - subject)
-
+    (no_valve_check ?subject1 - subject)
+    (valve_check ?subject1 - subject)
+    (no_pump_check ?subject1 - subject)
+    (pump_check ?subject1 - subject)
 
    )
 
@@ -57,4 +59,49 @@
             (at end (seals_check ?B))
         )
     )
+ (:durative-action photograph_valve_EO
+       :parameters ( ?V - robot ?L - location ?G - camera_eo ?B - valve)
+       :duration (= ?duration 10)
+       :condition (and 
+            (over all (at ?V ?L))
+            (at start (at ?B ?L))
+            (at start (available ?G))
+            (at start (no_photo ?B))
+       )
+       :effect (and 
+	    (at start (not (no_photo ?B)))
+            (at end (photo ?B))
+        )
+    )
+     (:durative-action check_valve
+       :parameters ( ?V - robot ?L - location ?C - camera_eo ?B - valve)
+       :duration (= ?duration 10)
+       :condition (and 
+            (over all (at ?V ?L))
+            (at start (at ?B ?L))
+            (at start (available ?C ))
+            (at start (no_valve_check ?B))
+       )
+       :effect (and 
+	    (at start (not (no_valve_check ?B)))
+            (at end (valve_check ?B))
+        )
+    )
+     (:durative-action check_pump
+       :parameters ( ?V - robot ?L - location ?C - camera_ir ?B - pump)
+       :duration (= ?duration 10)
+       :condition (and 
+            (over all (at ?V ?L))
+            (at start (at ?B ?L))
+            (at start (available ?C))
+            (at start (no_pump_check ?B))
+       )
+       :effect (and 
+        (at start (not (no_pump_check ?B)))
+            (at end (pump_check ?B))
+        )
+    )
+    
+
+
 )
